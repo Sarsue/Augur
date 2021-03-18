@@ -29,7 +29,6 @@ def get_current_prices(ids):
     api_url = '{0}simple/price'.format(
         API_URL_BASE)
     api_url = api_url_params(api_url, kwargs)
-    print(api_url)
     return request(api_url)
 
 
@@ -43,10 +42,13 @@ def get_market_data(vs_currency):
     api_url = '{0}coins/markets'.format(
         API_URL_BASE)
     api_url = api_url_params(api_url, kwargs)
-    print(api_url)
+    return request(api_url)
 
 
-def get_coins(id):
+def get_coin_tickers(id):
+    api_url = '{0}coins/{1}/tickers'.format(
+        API_URL_BASE, id)
+    return request(api_url)
 
 
 def api_url_params(api_url, params):
@@ -87,7 +89,7 @@ def request(url):
         raise
 
 
-def save_data(path):
+def save_security_data(path):
     with open(path, 'w') as outfile:
         json.dump(data, outfile)
 
