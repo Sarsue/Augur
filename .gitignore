@@ -127,3 +127,4 @@ config.json
 .mypy_cache/
 .dmypy.json
 dmypy.json
+workspace.code-workspace
