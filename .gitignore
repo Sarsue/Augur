@@ -108,7 +108,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+../workspace.code-workspace
 data/
 config.json
 # Spyder project settings
