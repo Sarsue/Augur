@@ -16,13 +16,9 @@ def search_for_tweets(search_term):
         consumer_secret = os.environ.get("TWITTER_API_SECRET")
         access_token_key = os.environ.get("TWITTER_ACCESS_TOKEN")
         access_token_secret = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
-        api = TwitterAPI(
-            consumer_key,
-            consumer_secret,
-            access_token_key,
-            access_token_secret,
-            api_version="1",
-        )
+        auth_type = "oAuth2"
+
+        api = TwitterAPI(consumer_key, consumer_secret, auth_type)
         r = api.request(
             "tweets/search/recent",
             {
@@ -32,25 +28,9 @@ def search_for_tweets(search_term):
             },
         )
 
-        for item in r:
-            print(item)
-
-        print("\nINCLUDES")
-        print(r.json()["includes"])
-
-        print("\nQUOTA")
-        print(r.get_quota())
-
-    except TwitterRequestError as e:
-        print(e.status_code)
-        for msg in iter(e):
-            print(msg)
-
-    except TwitterConnectionError as e:
-        print(e.status_code)
-
-    except Exception as e:
-        print(e)
+        print(r.status_code)
+    except Exception as err:
+        print(err)
 
 
 if __name__ == "__main__":
