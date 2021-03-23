@@ -17,21 +17,20 @@ carriers = {
     "virgin": "@vmobile.ca",
     "rogers": "@pcs.rogers.com",
 }
- # move to config or get from file system
-recipients = {
-        "5147798178": "virgin",
-        "6136143467": "freedom",
-        "4379285776": "rogers",
-    }
-
+# move to config or get from file system
 def send_txt(message):
     # Replace the number with your own, or consider using an argument\dict for multiple people.
+    with open("../config.json") as f:
+        config = json.load(f)
+    recipients = config["SMS"]
+    print(recipients)
     for key in recipients:
         to_number = f"{key}{carriers[recipients[key]]}"
         auth = (
             os.environ.get("APP_NOTIFICATION_EMAIL"),
             os.environ.get("APP_NOTIFICATION_PASSWORD"),
         )
+
         # Establish a secure session with gmail's outgoing SMTP server using your gmail account
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
@@ -46,4 +45,5 @@ def send_email(to, subject, message):
 
 
 if __name__ == "__main__":
-    # send_txt(msg)
+    msg = "Hello"
+    send_txt(msg)
