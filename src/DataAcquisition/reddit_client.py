@@ -1,4 +1,3 @@
-import pandas as pd
 from prawcore.exceptions import ResponseException
 from requests import HTTPError
 from psaw import PushshiftAPI
@@ -6,7 +5,7 @@ import praw
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
+import pandas  as pd
 
 def get_reddit_watchlist(subs):
     client_id = os.environ.get('REDDIT_CLIENT_ID')
