@@ -2,7 +2,7 @@ import json
 import smtplib
 import os
 from dotenv import load_dotenv
-
+import utility
 
 load_dotenv()
 
@@ -20,10 +20,8 @@ carriers = {
 # move to config or get from file system
 def send_txt(message):
     # Replace the number with your own, or consider using an argument\dict for multiple people.
-    with open("../config.json") as f:
-        config = json.load(f)
-    recipients = config["SMS"]
-    print(recipients)
+
+    recipients = utility.get_config("SMS")
     for key in recipients:
         to_number = f"{key}{carriers[recipients[key]]}"
         auth = (

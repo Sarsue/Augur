@@ -1,9 +1,7 @@
- workspace.code-workspace
-
 # Editors
 .vscode/
 .idea/
-
+config.json
 # Vagrant
 .vagrant/
 

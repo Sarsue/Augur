@@ -1,21 +1,25 @@
-https://github.com/DidierRLopes/GamestonkTerminal
+Getting Started
+Install
 
-100 requests per minute
-https://github.com/man-c/pycoingecko
+Our current recommendation is to use this project with Anaconda's Python distribution - either full Anaconda3 Latest or Miniconda3 Latest. Several features in this project utilize Machine Learning. Machine Learning Python dependencies are optional. If you decided to add Machine Learning features at a later point, you will likely have better user experience with Anaconda's Python distribution.
 
-sentiment bot trading app
-fetch twitter data
-fetch reddit data
-fetch market data and track gainers and losers
-correlate between negative sentiments and positive sentiments.
-https://github.com/Vanclief/algo-trading-crypto
+Install Anaconda
+Confirm that you have it with: conda -V. The output should be something along the lines of: conda 4.9.2
 
+Create Environment
+You can name the environment whatever you want. Although I use augur
 
-technical indicators
-https://github.com/allister633/binance-algotrade
+conda create -n augur 
+Activate the virtual environment
+conda activate augur
+Note: At the end, you can deactivate it with: conda deactivate
 
-prediction
-https://github.com/stavros0/bitcoin-price-prediction/blob/master/examples/millionaire.py
-https://github.com/stavros0/bitcoin-price-prediction/blob/master/bitcoin_price_prediction/bayesian_regression.py
+Fork the Project
+Via HTTPS: git clone https://github.com/Sarsue/Augur.git
+via SSH: git clone git@https://github.com/Sarsue/Augur.git
 
-Reference https://github.com/Metnew/crypto-price-prediction-projects
+pip install -r requirements.txt
+
+Navigate into the folder with: cd augur/src
+
+python3 augur.py

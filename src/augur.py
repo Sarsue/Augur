@@ -1,9 +1,14 @@
+import sched
 import time
+from DataAcquisition.reddit_client import get_reddit_watchlist
+
+import utility
 
 
-def get_wishlist():
+def get_wishlist(key):
     """Returns a list of securities based on some criterias scraped from many sources """
-    return ["Bitcoin", "Ethereum", "Cardano"]
+    subs = utility.get_config(key)
+    get_reddit_watchlist(subs)
 
 
 def get_analysis(security):
@@ -16,11 +21,11 @@ def register_for_notifications(email):
 
 
 def main():
-    print("Starting task")
-    for i in range(15):
-        print(i)
-        time.sleep(1)
-    print("Task completed")
+    get_wishlist("CRYPTO")
+    # while True:
+    #     get wishlist
+    #     get sentiment and ta analysis (price and volume dip on solid projjects)
+    #     send notification
 
 
 if __name__ == "__main__":
