@@ -96,6 +96,7 @@ def save_security_data(path):
 
 if __name__ == '__main__':
     # function sample call
-    # coin_data = get_coin_historical_data("bitcoin", "cad", 30)
+    coin_data = get_coin_historical_data("chainlink", "cad", 30)
+    print(coin_data)
     # price_data = get_current_prices(['bitcoin', 'ethereum', 'cardano'])
-    get_market_data('cad')
+    # get_market_data('cad')

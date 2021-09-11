@@ -5,28 +5,34 @@ from DataAcquisition.reddit_client import get_reddit_watchlist
 import utility
 
 
-def get_wishlist(key):
+def reddit_sentiments():
     """Returns a list of securities based on some criterias scraped from many sources """
     subs = utility.get_config(key)
-    get_reddit_watchlist(subs)
+   
 
-
-def get_analysis(security):
+def coingecko_prices():
     """return Sentiment, Technical and Fundamental analysis for a security on a scale of 1-10"""
     return {"data": {"sentiments": 6, "technical": 7, "fundamental": 5}}
 
 
-def register_for_notifications(email):
-    """registers an email and or phone number for notifications"""
+def google_twitter_trends():
+    """returns crypto's with increased mentions on social media"""
+
+
+
+
 
 
 def main():
-    get_wishlist("CRYPTO")
-    # while True:
-    #     get wishlist
-    #     get sentiment and ta analysis (price and volume dip on solid projjects)
+    # initialize source provider manager  here pass it confg
+    while True:
+        get_wishlist("CRYPTO")
+        time.sleep(15)
     #     send notification
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)
