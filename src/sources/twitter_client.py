@@ -6,7 +6,7 @@ from pandas.core.frame import DataFrame
 import json 
 import re
 load_dotenv()
-
+import Utility.chatter_processor as processor
 
 def mine_twitter(search_term: str, count: int) -> DataFrame:
     API_TWITTER_BEARER_TOKEN = os.environ.get("TWITTER_BEARER_TOKEN")
@@ -49,32 +49,16 @@ def get_data(tweet):
     else:
         s_text = tweet["text"]
 
-    data = {"created_at": s_datetime, "clean_text": clean_tweet(s_text)}
+    data = {"created_at": s_datetime, "clean_text": processor.clean_up_pipeline(s_text)}
     print(s_text)
     return data
-def clean_tweet(tweet):
-        '''
-        Utility function to clean tweet text by removing links, special characters
-        using simple regex statements.
-        '''
-        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
 
-def mine_twitter_topics(topics):
+def mine_twitter_topics():
+    topics = ["investing","business & finance", "cryptocurrency"]
     for topic in topics:
         twitter_data = mine_twitter(topic, 200)
         outFileName="/home/pi/dev/augur/data/sentiments/twitter/" + topic + ".json"
         twitter_data.to_json(outFileName)
+    return twitter_data.to_json()
     
-
-if __name__ == "__main__":
-    # function sample call
-    # coin_data = get_coin_historical_data("bitcoin", "cad", 30)
-    # price_data = get_current_prices(['bitcoin', 'ethereum', 'cardano'])
-    topics = ["investing","business & finance", "cryptocurrency"]
-    mine_twitter_topics(topics)
-   
-
-
-
-        
 
