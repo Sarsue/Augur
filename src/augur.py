@@ -1,28 +1,32 @@
 from flask import Flask,request
-app = Flask(__name__)
-from sources.twitter_client import mine_twitter_topics
 
-@app.route('/')
-def index():
-    return 'Welcome to Augur Api'
+app = Flask(__name__)
+
+
+# Get rest documented with swagger
+
+@app.route('/', methods=['GET'])
+def home():
+    return "<h1>Augur Api</h1><p>This site is a prototype API for augur a MVP investment tool. </p>"
 
 
 @app.route('/api/v1/sentiments', methods=['GET', 'POST'])
 def sentiments():
     if request.method == "GET":
-        result = mine_twitter_topics()
+        result = sentiments_processor.get_sentiments()
         return {
             'message': result,
             'method': request.method
         }
     if request.method == "POST":
+        # add topic/category to mine ftwitter an reddit for 
         return {
             'message': 'This endpoint should create an entity',
             'method': request.method,
 		    'body': request.json
         }
 
-@app.route('/api/v1/sentiments/<string:ticker_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/v1/sentiments/<string:query>', methods=['GET', 'PUT', 'DELETE'])
 def sentiment(ticker_id):
      if request.method == "GET":
         return {
