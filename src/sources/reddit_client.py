@@ -1,3 +1,4 @@
+from datetime import datetime
 import pandas as pd
 from prawcore.exceptions import ResponseException
 from requests import HTTPError
@@ -10,16 +11,9 @@ import time
 from typing import List
 
 load_dotenv()
-alias_config = {
-    "BTC": "bitcoin",
-    "ETH": "ethereum",
-    "ADA": "cardano",
-    "XMR": "monero",
-    "LINK": "chainlink"
-}
 
 
-def mine_reddit(security: str) -> DataFrame:
+def mine_reddit():
     client_id = os.environ.get("REDDIT_CLIENT_ID")
     client_secret = os.environ.get("REDDIT_CLIENT_SECRET")
     user_agent = os.environ.get("REDDIT_USER_AGENT")
@@ -32,13 +26,8 @@ def mine_reddit(security: str) -> DataFrame:
         username=username,
         user_agent=user_agent,
     )
-    queries = []
-    specific_sub = alias_config[security.upper()]
-    queries.append(security)
-    queries.append(specific_sub)
+   
     subs = os.environ.get('CRYPTO_REDDIT_SUBS').split(",")
-    subs.append(specific_sub)
-    print(subs, queries)
     df_posts = pd.DataFrame()
 
     for sub in subs:
@@ -51,10 +40,10 @@ def mine_reddit(security: str) -> DataFrame:
             for comment in comments:
                 try:
                     print(comment.body)
-                    if any(query in comment.body.lower() for query in queries):
-                        data = {"created_at":  comment.created_utc,
+                    #if any(query in comment.body.lower() for query in queries):
+                    data = {"created_at":  comment.created_utc,
                                 "text": comment.body}
-                        df_posts = df_posts.append(data, ignore_index=True)
+                    df_posts = df_posts.append(data, ignore_index=True)
 
                  # text_blob_sentiment(top_level_comment.body, sub_entries_textblob)
                  # nltk_sentiment(top_level_comment.body, sub_entries_nltk)
@@ -65,14 +54,13 @@ def mine_reddit(security: str) -> DataFrame:
                 except:
                     continue
             time.sleep(5)
-    return df_posts
+    outFileName="/home/pi/dev/augur/data/sentiments/reddit/" + str(datetime.now()) + ".json"
+    df_posts.to_json(outFileName)
+    
 
-def mine_reddit_list(crypto_list):
-    for crypto in crypto_list:
-        posts = mine_reddit(crypto)
-        outFileName="/home/pi/dev/augur/data/sentiments/reddit/" + crypto + ".json"
-        posts.to_json(outFileName)
+def load_all():
+    pass
+
 
 if __name__ == "__main__":
-    crypto_list = ['btc','eth']
-    mine_reddit_list(crypto_list)
+    mine_reddit()

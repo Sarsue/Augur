@@ -1,9 +1,18 @@
-from flask import Flask,request
+from flask import Flask,request,Response
+from sources import twitter_client
+import time
+from flask_apscheduler import APScheduler
+import json
 
 app = Flask(__name__)
+scheduler = APScheduler()
 
 
-# Get rest documented with swagger
+def mining_tasks():
+    """ Function for test purposes. """
+    twitter_client.mine_twitter()
+
+
 
 @app.route('/', methods=['GET'])
 def home():
@@ -13,11 +22,20 @@ def home():
 @app.route('/api/v1/sentiments', methods=['GET', 'POST'])
 def sentiments():
     if request.method == "GET":
-        result = sentiments_processor.get_sentiments()
-        return {
-            'message': result,
-            'method': request.method
-        }
+        tweets = twitter_client.load_tweets()
+        length = len(tweets)
+        if(length > 0):
+            result =[]
+            for tweetdf in tweets:
+                for row in tweetdf.itertuples():
+                    result.append({"text":row.text, "creationstamp":row.creationstamp, "sentimentlabel":row.scores})
+            return Response(json.dumps(result), mimetype='application/json')
+
+        else:
+            return {
+                'message': 'loading',
+                'method': request.method
+            }
     if request.method == "POST":
         # add topic/category to mine ftwitter an reddit for 
         return {
@@ -55,4 +73,6 @@ def sentiment(ticker_id):
 
 
 if __name__ == '__main__':
+    scheduler.add_job(id = 'Scheduled Task', func=mining_tasks, trigger="interval", seconds=60)
+    scheduler.start()
     app.run(debug=True, port=5000, host='0.0.0.0')
