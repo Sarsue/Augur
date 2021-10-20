@@ -1,5 +1,5 @@
 from flask import Flask,request,Response
-from sources import twitter_client
+from sources.twitter_client import mine_twitter, load_tweets
 import time
 from flask_apscheduler import APScheduler
 import json
@@ -10,7 +10,7 @@ scheduler = APScheduler()
 
 def mining_tasks():
     """ Function for test purposes. """
-    twitter_client.mine_twitter()
+    mine_twitter()
 
 
 
@@ -22,13 +22,20 @@ def home():
 @app.route('/api/v1/sentiments', methods=['GET', 'POST'])
 def sentiments():
     if request.method == "GET":
-        tweets = twitter_client.load_tweets()
+        tweets = load_tweets()
         length = len(tweets)
+        max = 50
+        
         if(length > 0):
             result =[]
             for tweetdf in tweets:
+                count = 0
                 for row in tweetdf.itertuples():
-                    result.append({"text":row.text, "creationstamp":row.creationstamp, "sentimentlabel":row.scores})
+                    result.append({"text":row.text, "creationstamp":row.creationstamp, "sentimentlabel":row.sentimentlabel})
+                    if (count >= max):
+                        break
+                    else:
+                        count = count + 1
             return Response(json.dumps(result), mimetype='application/json')
 
         else:

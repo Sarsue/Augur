@@ -1,0 +1,58 @@
+import sqlite3
+from sqlite3 import Error
+
+from numpy import double
+
+conn = sqlite3.connect(database = r"/home/pi/dev/augur/data/augur.db")
+
+def create_table(create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+def insert_sentiments(sentiments):
+    """
+    Create a new sentiment into the sentiments table
+    :param conn:
+    :param sentiment:
+    :return: sentiment id
+    """
+    sql = ''' INSERT INTO sentiments(timestamp,text_content,ticker,text_source,text_sentiment_score)
+              VALUES(?,?,?,?,?) '''
+   
+    cur = conn.cursor()
+    cur.executemany(sql, sentiments)
+    conn.commit()
+    return cur.lastrowid
+
+def main():
+   
+
+    sql_create_sentiments_table = """ CREATE TABLE IF NOT EXISTS sentiments (
+                                        id integer PRIMARY KEY,
+                                        timestamp text NOT NULL,
+                                        text_content text NOT NULL,
+                                        ticker text NOT NULL,
+                                        text_source text,
+                                        text_sentiment_score real,
+                                        PRIMARY KEY(timestamp,ticker)
+                                    ); """
+
+
+    # create a database connection
+    
+
+    # create tables
+    if conn is not None:
+        # create projects table
+        create_table(conn, sql_create_sentiments_table)
+
+    else:
+        print("Error! cannot create the database connection.")

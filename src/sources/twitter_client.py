@@ -1,4 +1,5 @@
 import os
+from typing import List
 import requests
 from dotenv import load_dotenv
 import pandas as pd
@@ -6,25 +7,24 @@ from pandas.core.frame import DataFrame
 import json 
 import re
 from datetime import datetime
-import chatter_processor
-import storage_manager
+from common.data_store import insert_sentiments 
+from sources.chatter_processor import sentiments_with_nltk 
+
 load_dotenv()
 
 def get_security_list():
     # if match is empty
-    return ["BTC","ETH","AAPL","FB"]
+    return ["BTC","ETH","AAPL","TSLA"]
 
 def mine_twitter():
     security_list = get_security_list()
-    twitter_data = []
      #= pd.DataFrame()
     for topic in security_list:
-        df = mine_twitter_topic(topic, 200)
-        storage_manager.save_data(topic,df)
-        twitter_data.append(df)
-    return twitter_data
-
-def mine_twitter_topic(search_term: str, count: int) -> DataFrame:
+        mined_sentiments = mine_twitter_topic(topic, 200)
+        if (len(mined_sentiments) > 0):
+            print("saving mined sentiments")
+            insert_sentiments(mined_sentiments)
+def mine_twitter_topic(search_term: str, count: int) -> List:
     API_TWITTER_BEARER_TOKEN = os.environ.get("TWITTER_BEARER_TOKEN")
     params = {
         "q": search_term,
@@ -38,21 +38,19 @@ def mine_twitter_topic(search_term: str, count: int) -> DataFrame:
         headers={"authorization": "Bearer " + API_TWITTER_BEARER_TOKEN},
     )
 
-    # Create dataframe
-    df_tweets = pd.DataFrame()
-
+    sentiments_to_save = []
     # Check that the API response was successful
     if response.status_code == 200:
+        
         for tweet in response.json()["statuses"]:
-            row = extract_data(tweet, search_term)
-            if row != None:
-                df_tweets = df_tweets.append(row, ignore_index=True)
+            sentiment_to_save = process_tweet(tweet, search_term)
+            if sentiment_to_save != None:
+               sentiments_to_save.append(sentiment_to_save)
     else:
         print(response.status_code)
-    return df_tweets
+    return sentiments_to_save
 
-
-def extract_data(tweet, search_term):
+def process_tweet(tweet, search_term):
     # check if the tweet is relevant to the search term
     if "+" in tweet["created_at"]:
         s_datetime = tweet["created_at"].split(" +")[0]
@@ -66,9 +64,9 @@ def extract_data(tweet, search_term):
     else:
         s_text = tweet["text"]
     if search_term in s_text:
-        sentiment_score = chatter_processor.sentiments_with_nltk(s_text)
+        sentiment_score = sentiments_with_nltk(s_text)
         if(abs(sentiment_score["score"]) > 0.5000):
-            return {"creationstamp": s_datetime, "text": s_text, "sentimentlabel":sentiment_score}
+            return (s_datetime,s_text,search_term,"TWITTER",sentiment_score)       
         else:
             return None
     else:
@@ -80,7 +78,9 @@ def load_tweets():
     result = []
     tweet_keys = get_security_list()
     for tweet_key in tweet_keys:
-        result.append(storage_manager.load_data(tweet_key))
+        json_objects = load_data(tweet_key)
+        for jsonObj in json_objects:
+            result.append(pd.DataFrame.from_dict(json.loads(jsonObj)))
     return result
 
 
