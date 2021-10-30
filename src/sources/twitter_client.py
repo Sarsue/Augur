@@ -7,7 +7,6 @@ from pandas.core.frame import DataFrame
 import json 
 import re
 from datetime import datetime
-from common.data_store import insert_sentiments 
 from sources.chatter_processor import sentiments_with_nltk 
 
 load_dotenv()
@@ -19,11 +18,12 @@ def get_security_list():
 def mine_twitter():
     security_list = get_security_list()
      #= pd.DataFrame()
+    result = {}
     for topic in security_list:
+        
         mined_sentiments = mine_twitter_topic(topic, 200)
-        if (len(mined_sentiments) > 0):
-            print("saving mined sentiments")
-            insert_sentiments(mined_sentiments)
+        result[topic] = mined_sentiments
+    return result   
 def mine_twitter_topic(search_term: str, count: int) -> List:
     API_TWITTER_BEARER_TOKEN = os.environ.get("TWITTER_BEARER_TOKEN")
     params = {
@@ -74,14 +74,15 @@ def process_tweet(tweet, search_term):
 
 
 
-def load_tweets():
-    result = []
-    tweet_keys = get_security_list()
-    for tweet_key in tweet_keys:
-        json_objects = load_data(tweet_key)
-        for jsonObj in json_objects:
-            result.append(pd.DataFrame.from_dict(json.loads(jsonObj)))
-    return result
+
+
+
+
+
+
+
+
+
 
 
 

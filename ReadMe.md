@@ -23,3 +23,5 @@ pip install -r requirements.txt
 Navigate into the folder with: cd augur/src
 
 python3 augur.py
+
+To support the project my BTC address is 33TZw75zrr7SZEcAh8pVAL11Vrqvyszpz6

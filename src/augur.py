@@ -1,5 +1,6 @@
 from flask import Flask,request,Response
-from sources.twitter_client import mine_twitter, load_tweets
+from sources.twitter_client import mine_twitter
+from common.storage_manager import save_data
 import time
 from flask_apscheduler import APScheduler
 import json
@@ -10,8 +11,10 @@ scheduler = APScheduler()
 
 def mining_tasks():
     """ Function for test purposes. """
-    mine_twitter()
-
+    mined_sentiments = mine_twitter()
+    if (len(mined_sentiments) > 0):
+            print("saving it next mined sentiments",mined_sentiments)
+            #insert_sentiments(mined_sentiments)
 
 
 @app.route('/', methods=['GET'])
@@ -19,29 +22,30 @@ def home():
     return "<h1>Augur Api</h1><p>This site is a prototype API for augur a MVP investment tool. </p>"
 
 
-@app.route('/api/v1/sentiments', methods=['GET', 'POST'])
-def sentiments():
+@app.route('/api/v1/recommendations', methods=['GET', 'POST'])
+def recommendations():
     if request.method == "GET":
-        tweets = load_tweets()
-        length = len(tweets)
-        max = 50
+        # tweets = load_tweets()
+        # length = len(tweets)
+        # max = 50
         
-        if(length > 0):
-            result =[]
-            for tweetdf in tweets:
-                count = 0
-                for row in tweetdf.itertuples():
-                    result.append({"text":row.text, "creationstamp":row.creationstamp, "sentimentlabel":row.sentimentlabel})
-                    if (count >= max):
-                        break
-                    else:
-                        count = count + 1
-            return Response(json.dumps(result), mimetype='application/json')
+        # if(length > 0):
+        #     result =[]
+        #     for tweetdf in tweets:
+        #         count = 0
+        #         for row in tweetdf.itertuples():
+        #             result.append({"text":row.text, "creationstamp":row.creationstamp, "sentimentlabel":row.sentimentlabel})
+        #             if (count >= max):
+        #                 break
+        #             else:
+        #                 count = count + 1
+        #     return Response(json.dumps(result), mimetype='application/json')
 
-        else:
-            return {
-                'message': 'loading',
-                'method': request.method
+        # else:
+        result = {"security": "Bitcoin"}
+        return {
+                'message': result,
+                # 'method': request.method
             }
     if request.method == "POST":
         # add topic/category to mine ftwitter an reddit for 
@@ -80,6 +84,6 @@ def sentiment(ticker_id):
 
 
 if __name__ == '__main__':
-    scheduler.add_job(id = 'Scheduled Task', func=mining_tasks, trigger="interval", seconds=60)
+    scheduler.add_job(id = 'Scheduled Task', func=mining_tasks, trigger="interval", seconds=30)
     scheduler.start()
     app.run(debug=True, port=5000, host='0.0.0.0')
