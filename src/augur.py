@@ -27,7 +27,7 @@ def recommendations():
     if request.method == "GET":
         # tweets = load_tweets()
         # length = len(tweets)
-        # max = 50
+        # max = 50  
         
         # if(length > 0):
         #     result =[]
