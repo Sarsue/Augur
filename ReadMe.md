@@ -1,7 +1,7 @@
 Getting Started
 Install
 
-Our current recommendation is to use this project with Anaconda's Python distribution - either full Anaconda3 Latest or Miniconda3 Latest. Several features in this project utilize Machine Learning. Machine Learning Python dependencies are optional. If you decided to add Machine Learning features at a later point, you will likely have better user experience with Anaconda's Python distribution.
+Our current recommendation is to use this project with Anaconda's Python distribution - either full Anaconda3 Latest or Miniconda3 Latest. 
 
 Install Anaconda
 Confirm that you have it with: conda -V. The output should be something along the lines of: conda 4.9.2
@@ -24,4 +24,4 @@ Navigate into the folder with: cd augur/src
 
 python3 augur.py
 
-To support the project my BTC address is 33TZw75zrr7SZEcAh8pVAL11Vrqvyszpz6
+
